@@ -1,15 +1,20 @@
 package org.example;
 
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Queue;
 
 
 public class Game {
     private static Game instance = null;
+    private static final int[] dx = {0, 1, -1, 0, 1, -1, 1, -1};
+    private static final int[] dy = {-1, -1, -1, 1, 1, 1, 0, 0};
     private int width, height, quantity, sizeButton;
+    protected int paneWidth, paneHeight;
     boolean isSet, finished;
     ButtonMine[][] buttons;
     private Game(){
@@ -21,12 +26,23 @@ public class Game {
         }
         return instance;
     }
-    public void newGame(){
+    public void newGame(String difficulty){
         //default 20x20 with 62 mines, size = 30, just to test
-        width = 20;
-        height = 20;
-        quantity = 62;
-        sizeButton = 30;
+        switch (difficulty) {
+            case "easy" -> {
+                width = 9; height = 9; quantity = 10; sizeButton = 50; paneWidth = 530; paneHeight = 560;
+            }
+            case "medium" -> {
+                width = 16; height = 16; quantity = 40; sizeButton = 35; paneWidth = 640; paneHeight = 640;
+            }
+            case "hard" -> {
+                width = 30; height = 16; quantity = 99; sizeButton = 30; paneWidth = 1080; paneHeight = 640;
+            }
+            default -> {
+                System.out.println("Something wrong in the code");
+                System.exit(666);
+            }
+        }
         isSet = false;
         finished = false;
         buttons = new ButtonMine[height][];
@@ -37,32 +53,32 @@ public class Game {
             }
         }
     }
-    public void setGame(int forbidden){
+    public void setGame(int pos_y, int pos_x){
         isSet = true;
-        setMines(forbidden);
+        setMines(pos_y, pos_x);
         setNearMines();
     }
-    public void setMines(int forbidden){
-        /* TODO: ignore first click, shouldn't be a mine */
+    public void setMines(int pos_y, int pos_x){
         Random r = new Random();
-        int[] mines = r.ints(quantity+1, 0, width*height).toArray();
-        for(int i = 0; i < quantity; i++){
-            if(mines[i] == forbidden) continue;
-            int x = mines[i] % 20;
-            int y = mines[i] / 20;
+        int[] mines = r.ints(quantity+9, 0, width*height).toArray();
+        int setted = 0, counter = 0;
+        while(setted < quantity){
+            int x = mines[counter] % width;
+            int y = mines[counter] / width;
+            counter++;
+            if(x <= (pos_x + 1) && x >= (pos_x - 1) && y <= (pos_y + 1) && y >= (pos_y - 1)) continue;
             buttons[y][x].setMine();
+            setted++;
         }
     }
     public void setNearMines(){
-        int[] dx = {0, 1, -1, 0, 1, -1, 1, -1};
-        int[] dy = {-1, -1, -1, 1, 1, 1, 0, 0};
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
                 for(int k = 0; k < 8; k++){
                     int pos_y = i + dx[k];
                     int pos_x = j + dy[k];
                     if(pos_x < width && pos_x >= 0 && pos_y < height && pos_y >= 0){
-                        if(buttons[pos_y][pos_x].isMine) {
+                        if(buttons[pos_y][pos_x].isMine()) {
                             buttons[i][j].nearMines++;
                         }
                     }
@@ -71,33 +87,72 @@ public class Game {
         }
     }
     public void openNear(ButtonMine btn){
-        //DFS-like
-        int[] dx = {0, 1, -1, 0, 1, -1, 1, -1};
-        int[] dy = {-1, -1, -1, 1, 1, 1, 0, 0};
         for (int k = 0; k < 8; k++) {
             int pos_y = btn.pos_y + dx[k];
             int pos_x = btn.pos_x + dy[k];
             if (pos_x < width && pos_x >= 0 && pos_y < height && pos_y >= 0) {
-                buttons[pos_y][pos_x].onClick();
+                buttons[pos_y][pos_x].showContent();
             }
+        }
+    }
+    public void showNear(ButtonMine btn){
+        int nearFlagged = 0;
+        for (int k = 0; k < 8; k++) {
+            int pos_y = btn.pos_y + dx[k];
+            int pos_x = btn.pos_x + dy[k];
+            if (pos_x < width && pos_x >= 0 && pos_y < height && pos_y >= 0) {
+                if(buttons[pos_y][pos_x].flagged){
+                    nearFlagged++;
+                }
+            }
+        }
+        if(nearFlagged == btn.nearMines){
+            for(int k = 0; k < 8; k++){
+                int pos_y = btn.pos_y + dx[k];
+                int pos_x = btn.pos_x + dy[k];
+                if (pos_x < width && pos_x >= 0 && pos_y < height && pos_y >= 0) {
+                    if(!buttons[pos_y][pos_x].clicked && !buttons[pos_y][pos_x].flagged){
+                        buttons[pos_y][pos_x].showContent();
+                    }
+                }
+            }
+            checkGame();
         }
     }
     public void triggerMines(){
+        finished = true;
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                if(buttons[i][j].isMine) buttons[i][j].onClick();
+                if(buttons[i][j].isMine) buttons[i][j].showContent();
+            }
+        }
+        showMessage("lose");
+    }
+    public void checkGame(){
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                if(!buttons[i][j].isMine && !buttons[i][j].clicked){
+                    return; //not finished
+                }
             }
         }
         finished = true;
+        showMessage("win");
+    }
+    private void showMessage(String message){
+        if(Objects.equals(message, "win")) JOptionPane.showMessageDialog(Main.frame, "Congratulations! You Win!!!");
+        else JOptionPane.showMessageDialog(Main.frame, "You Lose!");
+
     }
     public JPanel drawGame(){
         JPanel jp = new JPanel();
-        jp.setLayout(null);
-        Dimension size = new Dimension(800, 600);
+        GridLayout layout = new GridLayout(height,width);
+        jp.setLayout(layout);
+        Dimension size = new Dimension(paneWidth, paneHeight);
         jp.setPreferredSize(size);
         jp.setMinimumSize(size);
         jp.setMaximumSize(size);
-        jp.setBackground(Color.black);
+        jp.setBackground(new Color(0x3f3f7f));
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
                 jp.add(buttons[i][j]);
