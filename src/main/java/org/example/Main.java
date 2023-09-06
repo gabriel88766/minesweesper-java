@@ -1,7 +1,6 @@
 package org.example;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,27 +11,25 @@ public class Main {
     public static void main(String[] args) {
         // Press Alt+Enter with your caret at the highlighted text to see how
         // IntelliJ IDEA suggests fixing it.
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Main.frame = new JFrame("Minesweeper");
-                JMenuBar menu = new JMenuBar();
-                //menu.set
-                //menu.setSize(800,30);
-                JMenu newGame = new JMenu("New Game");
-                newGame.add(new NewGameItem("easy"));
-                newGame.add(new NewGameItem("medium"));
-                newGame.add(new NewGameItem("hard"));
-                menu.add(newGame);
-                frame.setJMenuBar(menu);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                Game.getInstance().newGame("medium");
-                frame.setContentPane(Game.getInstance().drawGame());
+        SwingUtilities.invokeLater(() -> {
+            Main.frame = new JFrame("Minesweeper");
+            JMenuBar menu = new JMenuBar();
+            //menu.set
+            //menu.setSize(800,30);
+            JMenu newGame = new JMenu("New Game");
+            newGame.add(new NewGameItem("easy"));
+            newGame.add(new NewGameItem("medium"));
+            newGame.add(new NewGameItem("hard"));
+            menu.add(newGame);
+            frame.setJMenuBar(menu);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            Game.getInstance().newGame("medium");
+            frame.setContentPane(Game.getInstance().drawGame());
 
-                //Display the window.
-                frame.pack();
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
-            }
+            //Display the window.
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
         });
     }
 }

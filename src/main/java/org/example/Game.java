@@ -1,12 +1,11 @@
 package org.example;
 
 import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
-import java.util.Random;
-import java.util.Queue;
+import java.util.List;
 
 
 public class Game {
@@ -59,16 +58,19 @@ public class Game {
         setNearMines();
     }
     public void setMines(int pos_y, int pos_x){
-        Random r = new Random();
-        int[] mines = r.ints(quantity+9, 0, width*height).toArray();
-        int setted = 0, counter = 0;
-        while(setted < quantity){
-            int x = mines[counter] % width;
-            int y = mines[counter] / width;
+        List<Integer> mines = new ArrayList<>();
+        for(int i = 0; i < width*height; i++){
+            mines.add(i);
+        }
+        Collections.shuffle(mines);
+        int minesSet = 0, counter = 0;
+        while(minesSet < quantity){
+            int x = mines.get(counter) % width;
+            int y = mines.get(counter) / width;
             counter++;
             if(x <= (pos_x + 1) && x >= (pos_x - 1) && y <= (pos_y + 1) && y >= (pos_y - 1)) continue;
             buttons[y][x].setMine();
-            setted++;
+            minesSet++;
         }
     }
     public void setNearMines(){
@@ -91,6 +93,7 @@ public class Game {
             int pos_y = btn.pos_y + dx[k];
             int pos_x = btn.pos_x + dy[k];
             if (pos_x < width && pos_x >= 0 && pos_y < height && pos_y >= 0) {
+
                 buttons[pos_y][pos_x].showContent();
             }
         }
