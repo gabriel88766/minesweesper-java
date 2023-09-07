@@ -60,17 +60,16 @@ public class Game {
     public void setMines(int pos_y, int pos_x){
         List<Integer> mines = new ArrayList<>();
         for(int i = 0; i < width*height; i++){
+            int x = i % width;
+            int y = i / width;
+            if(x <= (pos_x + 1) && x >= (pos_x - 1) && y <= (pos_y + 1) && y >= (pos_y - 1)) continue;
             mines.add(i);
         }
         Collections.shuffle(mines);
-        int minesSet = 0, counter = 0;
-        while(minesSet < quantity){
-            int x = mines.get(counter) % width;
-            int y = mines.get(counter) / width;
-            counter++;
-            if(x <= (pos_x + 1) && x >= (pos_x - 1) && y <= (pos_y + 1) && y >= (pos_y - 1)) continue;
+        for(int i = 0; i < quantity; i++){
+            int x = mines.get(i) % width;
+            int y = mines.get(i) / width;
             buttons[y][x].setMine();
-            minesSet++;
         }
     }
     public void setNearMines(){
