@@ -12,7 +12,7 @@ Clone this project in IntelliJ IDEA and run it with java 20. <br>
 4. If some square is empty, there is no mines near that square.<br>
 5. If you open some empty square, all adjacent squares will be opened recursively.<br>
 6. You can right-click to mark some square as a mine.<br>
-7. Once you have marked all mines near a number, you can click in that number to open all squares near that number, <br>
+7. Once you have marked all mines near a number, you can click in that number to open all squares near that number, 
 except those marked as mine. If you marked some mine incorrectly, the real mine will be activated, and you will lose.
 
 # Snapshot
