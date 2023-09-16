@@ -7,16 +7,16 @@ import java.awt.event.MouseEvent;
 
 public class ButtonMine extends JButton {
     static final Icon[] ICONS = {
-        new ImageIcon("src\\main\\java\\org\\example\\images\\mine.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\1.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\2.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\3.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\4.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\5.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\6.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\7.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\8.png"),
-        new ImageIcon("src\\main\\java\\org\\example\\images\\flag.png")
+        new ImageIcon("src/main/java/org/example/images/mine.png"),
+        new ImageIcon("src/main/java/org/example/images/1.png"),
+        new ImageIcon("src/main/java/org/example/images/2.png"),
+        new ImageIcon("src/main/java/org/example/images/3.png"),
+        new ImageIcon("src/main/java/org/example/images/4.png"),
+        new ImageIcon("src/main/java/org/example/images/5.png"),
+        new ImageIcon("src/main/java/org/example/images/6.png"),
+        new ImageIcon("src/main/java/org/example/images/7.png"),
+        new ImageIcon("src/main/java/org/example/images/8.png"),
+        new ImageIcon("src/main/java/org/example/images/flag.png")
     };
     boolean isMine, clicked, flagged, mouseInside;
     int pos_x, pos_y;
